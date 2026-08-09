@@ -4,13 +4,13 @@ const locales = ['en', 'ar'];
 const defaultLocale = 'en';
 
 function getLocale(request) {
-  // Check for locale in cookie
+  // 1. Cookie check
   const cookieLocale = request.cookies.get('NEXT_LOCALE');
   if (cookieLocale && locales.includes(cookieLocale.value)) {
     return cookieLocale.value;
   }
 
-  // Check for locale in accept-language header
+  // 2. Accept-Language header check
   const acceptLanguage = request.headers.get('accept-language');
   if (acceptLanguage) {
     const preferredLocale = acceptLanguage.split(',')[0].split('-')[0];
@@ -25,37 +25,63 @@ function getLocale(request) {
 export function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  // 1. Check if pathname already starts with a supported locale
+  // 1. Skip API routes and static assets early
+  if (
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/_next') ||
+    pathname.match(/\.(jpg|jpeg|png|gif|ico|svg|webp|css|js)$/)
+  ) {
+    return NextResponse.next();
+  }
+
+  // 2. Check if path has a locale prefix
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
 
-  if (pathnameHasLocale) {
-    // Extract current locale from pathname
-    const currentLocale = pathname.split('/')[1];
-    const response = NextResponse.next();
-    
-    // Update cookie if missing or changed
-    if (request.cookies.get('NEXT_LOCALE')?.value !== currentLocale) {
-      response.cookies.set('NEXT_LOCALE', currentLocale, { path: '/', maxAge: 31536000 });
-    }
-    
+  // Determine current locale and path normalized without locale
+  const currentLocale = pathnameHasLocale ? pathname.split('/')[1] : getLocale(request);
+  const pathWithoutLocale = pathnameHasLocale
+    ? '/' + pathname.split('/').slice(2).join('/')
+    : pathname;
+
+  // 3. Unlocalized URL -> Redirect to include locale prefix
+  if (!pathnameHasLocale) {
+    const redirectUrl = new URL(
+      `/${currentLocale}${pathname === '/' ? '' : pathname}`,
+      request.url
+    );
+    const response = NextResponse.redirect(redirectUrl);
+    response.cookies.set('NEXT_LOCALE', currentLocale, { path: '/', maxAge: 31536000 });
     return response;
   }
 
-  // 2. Path has no locale: determine locale and REDIRECT
-  const locale = getLocale(request);
-  const redirectUrl = new URL(`/${locale}${pathname === '/' ? '' : pathname}`, request.url);
+  // 4. Admin Protection Logic (Evaluated on normalized path)
+  const isAdminRoute = pathWithoutLocale.startsWith('/admin');
+  const isLoginPage = pathWithoutLocale.startsWith('/admin/login');
 
-  const response = NextResponse.redirect(redirectUrl);
-  response.cookies.set('NEXT_LOCALE', locale, { path: '/', maxAge: 31536000 });
+  if (isAdminRoute && !isLoginPage) {
+    const token = request.cookies.get('admin_token')?.value;
+
+    // Direct to login if missing token
+    if (!token) {
+      const loginUrl = new URL(`/${currentLocale}/admin/login`, request.url);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  // 5. Pass through & update locale cookie if changed
+  const response = NextResponse.next();
+  if (request.cookies.get('NEXT_LOCALE')?.value !== currentLocale) {
+    response.cookies.set('NEXT_LOCALE', currentLocale, { path: '/', maxAge: 31536000 });
+  }
 
   return response;
 }
 
 export const config = {
   matcher: [
-    // Ignore static files, api routes, and common image extensions
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    // Exclude API routes, next internal files, and static file formats
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:jpg|jpeg|png|gif|ico|svg|webp|css|js)$).*)',
   ],
 };
