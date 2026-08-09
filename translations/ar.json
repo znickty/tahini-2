@@ -1,0 +1,47 @@
+{
+  "common": {
+    "welcome": "مرحباً بكم في بيت الطهينة",
+    "orderNow": "اطلب الآن",
+    "viewMenu": "عرض القائمة",
+    "cart": "السلة",
+    "search": "بحث",
+    "language": "اللغة",
+    "arabic": "العربية",
+    "english": "الإنجليزية"
+  },
+  "menu": {
+    "title": "قائمتنا",
+    "categories": "التصنيفات",
+    "allItems": "جميع العناصر",
+    "addToCart": "أضف إلى السلة",
+    "price": "السعر",
+    "available": "متوفر",
+    "notAvailable": "غير متوفر",
+    "preparationTime": "وقت التحضير"
+  },
+  "cart": {
+    "title": "سلة مشترياتك",
+    "empty": "سلة المشتريات فارغة",
+    "total": "المجموع",
+    "checkout": "إتمام الطلب",
+    "remove": "إزالة",
+    "quantity": "الكمية",
+    "deliveryFee": "رسوم التوصيل",
+    "subtotal": "المجموع الفرعي"
+  },
+  "admin": {
+    "title": "لوحة التحكم",
+    "dashboard": "لوحة التحكم",
+    "products": "المنتجات",
+    "orders": "الطلبات",
+    "sales": "المبيعات",
+    "addProduct": "إضافة منتج",
+    "editProduct": "تعديل منتج",
+    "deleteProduct": "حذف منتج",
+    "trackSales": "تتبع المبيعات",
+    "customSales": "مبيعات مخصصة",
+    "todaySales": "مبيعات اليوم",
+    "totalOrders": "إجمالي الطلبات",
+    "revenue": "الإيرادات"
+  }
+}

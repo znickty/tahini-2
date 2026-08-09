@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: tahini_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: tahini_house
+      MYSQL_USER: tahini_user
+      MYSQL_PASSWORD: tahini_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - tahini_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: tahini_phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 100M
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - tahini_network
+
+  # app:
+  #   build: .
+  #   container_name: tahini_app
+  #   restart: always
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     DATABASE_HOST: mysql
+  #     DATABASE_USER: tahini_user
+  #     DATABASE_PASSWORD: tahini_password
+  #     DATABASE_NAME: tahini_house
+  #     NEXTAUTH_SECRET: your-secret-key-here
+  #   depends_on:
+  #     - mysql
+  #   networks:
+  #     - tahini_network
+  #   volumes:
+  #     - ./src:/app/src
+  #     - ./public:/app/public
+
+volumes:
+  mysql_data:
+
+networks:
+  tahini_network:
+    driver: bridge

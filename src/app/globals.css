@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+/* 1. Theme Configuration (Custom colors & utilities) */
+@theme {
+  --color-tahini-gold: #C6A15B;
+  --color-tahini-brown: #A07F3F; /* Added fallback so hover:bg-tahini-brown works */
+  --color-tahini-dark: #1A1A1A;
+  --color-tahini-cream: #F5F0E8;
+}
+
+/* 2. Base Styles */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: var(--color-gray-50, #f9fafb);
+    padding-top: 80px; /* For fixed header */
+  }
+
+  /* RTL Support */
+  [dir="rtl"] {
+    text-align: right;
+  }
+
+  [dir="rtl"] .space-x-reverse {
+    flex-direction: row-reverse;
+  }
+
+  /* Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: var(--color-gray-100, #f3f4f6);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-tahini-gold);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-tahini-brown);
+  }
+}
+
+/* 3. Component Classes */
+@layer components {
+  .btn-primary {
+    @apply bg-tahini-gold text-white px-6 py-3 rounded-lg hover:bg-tahini-brown transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-tahini-dark px-6 py-3 rounded-lg border-2 border-tahini-gold hover:bg-tahini-cream transition-colors duration-200;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold focus:border-transparent;
+  }
+
+  .select-field {
+    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold focus:border-transparent bg-white;
+  }
+
+  /* Mobile Responsive Adjustments */
+  @media (max-width: 640px) {
+    body {
+      padding-top: 64px;
+    }
+    
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  }
+
+  /* Print Styles */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+  }
+}
+
+/* 4. Custom Keyframes & Utility Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes pulse-gold {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(198, 161, 91, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(198, 161, 91, 0);
+  }
+}
+
+.pulse-gold {
+  animation: pulse-gold 2s infinite;
+}
+
+/* Custom Toast Styling */
+.custom-toast {
+  @apply rounded-lg shadow-lg bg-white border-l-4 border-tahini-gold;
+}
+
+.custom-toast-success {
+  @apply border-green-500;
+}
+
+.custom-toast-error {
+  @apply border-red-500;
+}

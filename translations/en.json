@@ -1,0 +1,47 @@
+{
+  "common": {
+    "welcome": "Welcome to Tahini House",
+    "orderNow": "Order Now",
+    "viewMenu": "View Menu",
+    "cart": "Cart",
+    "search": "Search",
+    "language": "Language",
+    "arabic": "Arabic",
+    "english": "English"
+  },
+  "menu": {
+    "title": "Our Menu",
+    "categories": "Categories",
+    "allItems": "All Items",
+    "addToCart": "Add to Cart",
+    "price": "Price",
+    "available": "Available",
+    "notAvailable": "Not Available",
+    "preparationTime": "Preparation Time"
+  },
+  "cart": {
+    "title": "Your Cart",
+    "empty": "Your cart is empty",
+    "total": "Total",
+    "checkout": "Checkout",
+    "remove": "Remove",
+    "quantity": "Quantity",
+    "deliveryFee": "Delivery Fee",
+    "subtotal": "Subtotal"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "dashboard": "Dashboard",
+    "products": "Products",
+    "orders": "Orders",
+    "sales": "Sales",
+    "addProduct": "Add Product",
+    "editProduct": "Edit Product",
+    "deleteProduct": "Delete Product",
+    "trackSales": "Track Sales",
+    "customSales": "Custom Sales",
+    "todaySales": "Today's Sales",
+    "totalOrders": "Total Orders",
+    "revenue": "Revenue"
+  }
+}
