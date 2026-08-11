@@ -35,6 +35,7 @@ export default function Header({ locale }) {
     { name: isArabic ? 'الرئيسية' : 'Home', href: getLocalizedPath('/') },
     { name: isArabic ? 'القائمة' : 'Menu', href: getLocalizedPath('/menu') },
     { name: isArabic ? 'عن المطعم' : 'About', href: getLocalizedPath('/about') },
+    { name: isArabic ? 'إدارة' : 'Admin', href: getLocalizedPath('/admin') },
   ];
 
   return (

@@ -29,8 +29,6 @@ export default function AdminLogin() {
 
       const data = await response.json();
 
-      cosole.log('Login response:', data);
-
       if (response.ok) {
         toast.success(isArabic ? 'تم تسجيل الدخول بنجاح' : 'Login successful');
         router.push(`/${locale}/admin`);
