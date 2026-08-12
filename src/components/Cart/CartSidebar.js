@@ -1,11 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
-import { FaTimes, FaPlus, FaMinus, FaTrash, FaShoppingBag } from 'react-icons/fa';
+import { FaTimes, FaPlus, FaMinus, FaTrash, FaShoppingBag, FaCreditCard } from 'react-icons/fa';
 
 export default function CartSidebar({ isOpen, onClose, locale }) {
   const { cartItems, updateQuantity, removeFromCart, getTotal, clearCart } = useCart();
+  const router = useRouter();
   const isArabic = locale === 'ar';
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
@@ -14,10 +16,17 @@ export default function CartSidebar({ isOpen, onClose, locale }) {
   const grandTotal = total + deliveryFee;
 
   const handleCheckout = () => {
+    if (cartItems.length === 0) return;
+    
     setIsCheckingOut(true);
-    setTimeout(() => {
-      setIsCheckingOut(false);
-    }, 2000);
+    onClose();
+    router.push(`/${locale}/cart`);
+    setIsCheckingOut(false);
+  };
+
+  const handleViewCart = () => {
+    onClose();
+    router.push(`/${locale}/cart`);
   };
 
   if (!isOpen) return null;
@@ -54,7 +63,7 @@ export default function CartSidebar({ isOpen, onClose, locale }) {
         </div>
 
         {/* Cart Items */}
-        <div className="flex-1 overflow-y-auto p-4" style={{ height: 'calc(100vh - 300px)' }}>
+        <div className="flex-1 overflow-y-auto p-4" style={{ height: 'calc(100vh - 320px)' }}>
           {cartItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-gray-400">
               <div className="text-6xl mb-4">🛒</div>
@@ -65,7 +74,7 @@ export default function CartSidebar({ isOpen, onClose, locale }) {
                 {isArabic ? 'أضف بعض الأطباق الشهية' : 'Add some delicious items'}
               </p>
               <button
-                onClick={onClose}
+                onClick={handleViewCart}
                 className="mt-4 bg-tahini-gold text-white px-6 py-2 rounded-lg hover:bg-tahini-brown transition-colors"
               >
                 {isArabic ? 'تصفح القائمة' : 'Browse Menu'}
@@ -103,7 +112,8 @@ export default function CartSidebar({ isOpen, onClose, locale }) {
                     <div className={`flex items-center gap-2 mt-1 ${isArabic ? 'flex-row-reverse' : ''}`}>
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition-colors"
+                        className="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition-colors disabled:opacity-50"
+                        disabled={item.quantity <= 1}
                       >
                         <FaMinus className="text-xs" />
                       </button>
@@ -125,13 +135,21 @@ export default function CartSidebar({ isOpen, onClose, locale }) {
                 </div>
               ))}
 
-              {/* Clear Cart Button */}
-              <button
-                onClick={clearCart}
-                className={`text-sm text-red-500 hover:text-red-700 transition-colors ${isArabic ? 'text-right block w-full' : ''}`}
-              >
-                {isArabic ? 'مسح السلة' : 'Clear Cart'}
-              </button>
+              {/* View Full Cart & Clear Cart */}
+              <div className="flex justify-between items-center pt-2">
+                <button
+                  onClick={handleViewCart}
+                  className="text-sm text-tahini-gold hover:text-tahini-brown transition-colors"
+                >
+                  {isArabic ? 'عرض السلة كاملة' : 'View Full Cart'}
+                </button>
+                <button
+                  onClick={clearCart}
+                  className="text-sm text-red-500 hover:text-red-700 transition-colors"
+                >
+                  {isArabic ? 'مسح السلة' : 'Clear Cart'}
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -155,29 +173,42 @@ export default function CartSidebar({ isOpen, onClose, locale }) {
               )}
               <div className="border-t pt-2">
                 <div className={`flex justify-between font-bold text-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
-                  <span>{isArabic ? 'المجموع الكلي' : 'Total'}</span>
+                  <span>{isArabic ? 'المجموع' : 'Total'}</span>
                   <span className="text-tahini-gold">{grandTotal.toFixed(2)} SAR</span>
                 </div>
               </div>
             </div>
 
-            <button
-              onClick={handleCheckout}
-              disabled={isCheckingOut}
-              className="w-full bg-tahini-gold text-white py-3 rounded-lg font-semibold hover:bg-tahini-brown transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {isCheckingOut ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  {isArabic ? 'جاري المعالجة...' : 'Processing...'}
-                </>
-              ) : (
-                <>
-                  <FaShoppingBag />
-                  {isArabic ? 'إتمام الطلب' : 'Proceed to Checkout'}
-                </>
-              )}
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={handleViewCart}
+                className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+              >
+                <FaShoppingBag />
+                {isArabic ? 'السلة' : 'Cart'}
+              </button>
+              <button
+                onClick={handleCheckout}
+                disabled={isCheckingOut || cartItems.length === 0}
+                className="flex-[2] bg-tahini-gold text-white py-3 rounded-lg font-semibold hover:bg-tahini-brown transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {isCheckingOut ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    {isArabic ? 'جاري...' : 'Loading...'}
+                  </>
+                ) : (
+                  <>
+                    <FaCreditCard />
+                    {isArabic ? 'إتمام الطلب' : 'Checkout'}
+                  </>
+                )}
+              </button>
+            </div>
+
+            <p className="text-xs text-gray-400 text-center mt-3">
+              🔒 {isArabic ? 'مدفوعات آمنة 100%' : '100% Secure Payments'}
+            </p>
           </div>
         )}
       </div>
