@@ -120,7 +120,6 @@ export default function CheckoutPage() {
       });
 
       const data = await response.json();
-      console.log('Order creation response:', data);
 
       if (response.ok && data.success) {
         const order = data.order;
@@ -133,7 +132,7 @@ export default function CheckoutPage() {
           toast.success(isArabic ? 'تم إنشاء الطلب، جاري التوجيه للدفع' : 'Order created, redirecting to payment');
           
           // Clear cart
-          clearCart();
+          // clearCart();
           
           // Redirect to payment page
           router.push(`/${locale}/payment?order_id=${order.id}`);
