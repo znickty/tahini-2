@@ -23,7 +23,7 @@ export default function CheckoutPage() {
   const locale = params.locale;
   const isArabic = locale === 'ar';
   const router = useRouter();
-  const { cartItems, getTotal, clearCart } = useCart();
+  // const { cartItems, getTotal, clearCart } = useCart();
   
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('online');
@@ -133,7 +133,7 @@ export default function CheckoutPage() {
           toast.success(isArabic ? 'تم إنشاء الطلب، جاري التوجيه للدفع' : 'Order created, redirecting to payment');
           
           // Clear cart
-        //   clearCart();
+          clearCart();
           
           // Redirect to payment page
           router.push(`/${locale}/payment?order_id=${order.id}`);
