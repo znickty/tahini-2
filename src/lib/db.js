@@ -5,10 +5,11 @@ let pool = null;
 export async function getConnection() {
   if (!pool) {
     pool = mysql.createPool({
-      host: process.env.DATABASE_HOST || 'localhost',
-      user: process.env.DATABASE_USER || 'tahini_user',
-      password: process.env.DATABASE_PASSWORD || 'tahini_password',
-      database: process.env.DATABASE_NAME || 'tahini_house',
+      host: process.env.MYSQLHOST || 'localhost',
+      user: process.env.MYSQLUSER || 'tahini_miz',
+      password: process.env.MYSQLPASSWORD || 'hGZPaLArzreWDtQcrdlJWDeKOvFtieKR',
+      database: process.env.MYSQLDATABASE || process.env.MYSQL_DATABASE || 'tahini_house',
+      port: Number(process.env.MYSQLPORT) || 3306,
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
