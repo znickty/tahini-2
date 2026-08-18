@@ -41,8 +41,8 @@ export default function Footer({ locale }) {
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
               {isArabic 
-                ? 'بيت الطهينة - أفضل المأكولات السعودية في جدة. نقدم لكم أشهى الأطباق التقليدية بلمسة عصرية.'
-                : 'Tahini House - The best Saudi cuisine in Jeddah. We serve traditional dishes with a modern touch.'
+                ? 'ثلث كيلوغرام - أفضل المأكولات السعودية في جدة. نقدم لكم أشهى الأطباق التقليدية بلمسة عصرية.'
+                : 'One-third Kilogram - The best Saudi cuisine in Jeddah. We serve traditional dishes with a modern touch.'
               }
             </p>
             <div className="flex space-x-4 rtl:space-x-reverse">
@@ -109,21 +109,21 @@ export default function Footer({ locale }) {
                 <FaMapMarkerAlt className="text-tahini-gold mt-1 flex-shrink-0" />
                 <span>
                   {isArabic 
-                    ? 'جدة، المملكة العربية السعودية'
-                    : 'Jeddah, Saudi Arabia'
+                    ? 'السلامة، جدة، المملكة العربية السعودية'
+                    : 'As Salamah, Jeddah, Saudi Arabia'
                   }
                 </span>
               </div>
               <div className="flex items-center gap-3 text-sm text-gray-400">
                 <FaPhone className="text-tahini-gold flex-shrink-0" />
-                <a href="tel:+966500000000" className="hover:text-tahini-gold transition-colors">
-                  +966 50 000 0000
+                <a href="tel:+966506771331" className="hover:text-tahini-gold transition-colors">
+                  +966 50 677 1331
                 </a>
               </div>
               <div className="flex items-center gap-3 text-sm text-gray-400">
                 <FaEnvelope className="text-tahini-gold flex-shrink-0" />
-                <a href="mailto:info@tahinihouse.com" className="hover:text-tahini-gold transition-colors">
-                  info@tahinihouse.com
+                <a href="mailto:admin@iszltd.com" className="hover:text-tahini-gold transition-colors">
+                  admin@iszltd.com
                 </a>
               </div>
             </div>
