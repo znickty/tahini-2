@@ -118,7 +118,7 @@ export default function ProductsList() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredProducts.map((product) => (
+              {filteredProducts?.map((product) => (
                 <tr key={product.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-3">

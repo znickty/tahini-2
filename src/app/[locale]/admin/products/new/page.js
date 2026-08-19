@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { FaSave, FaTimes, FaImage, FaTrash } from 'react-icons/fa';
+import { FaSave, FaTimes, FaPlus, FaTrash, FaUtensils } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
 export default function NewProductPage() {
@@ -24,10 +24,25 @@ export default function NewProductPage() {
     image_url: '',
     is_available: true,
     is_featured: false,
-    preparation_time: 15,
-    calories: '',
+    preparation_time_minutes: 0,
+    kcal: '',
     sort_order: 0,
+    // Nutritional info
+    calories: '',
+    cholesterol: '',
+    carbohydrates: '',
+    fiber: '',
+    sodium: '',
+    protein: '',
+    fat: '',
+    // Sizes
+    sizes: [],
+    // Alerts
+    alerts: [],
   });
+
+  const [newSize, setNewSize] = useState({ name_en: '', name_ar: '', price: '' });
+  const [newAlert, setNewAlert] = useState({ alert_type: 'allergy', name_en: '', name_ar: '' });
 
   useEffect(() => {
     fetchCategories();
@@ -51,6 +66,52 @@ export default function NewProductPage() {
     });
   };
 
+  const handleNutritionChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const addSize = () => {
+    if (newSize.name_en && newSize.name_ar && newSize.price) {
+      setFormData({
+        ...formData,
+        sizes: [...formData.sizes, { ...newSize, sort_order: formData.sizes.length }]
+      });
+      setNewSize({ name_en: '', name_ar: '', price: '' });
+    } else {
+      toast.error(isArabic ? 'يرجى ملء جميع حقول الحجم' : 'Please fill all size fields');
+    }
+  };
+
+  const removeSize = (index) => {
+    setFormData({
+      ...formData,
+      sizes: formData.sizes.filter((_, i) => i !== index)
+    });
+  };
+
+  const addAlert = () => {
+    if (newAlert.alert_type && newAlert.name_en && newAlert.name_ar) {
+      setFormData({
+        ...formData,
+        alerts: [...formData.alerts, { ...newAlert }]
+      });
+      setNewAlert({ alert_type: 'allergy', name_en: '', name_ar: '' });
+    } else {
+      toast.error(isArabic ? 'يرجى ملء جميع حقول التنبيه' : 'Please fill all alert fields');
+    }
+  };
+
+  const removeAlert = (index) => {
+    setFormData({
+      ...formData,
+      alerts: formData.alerts.filter((_, i) => i !== index)
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -65,9 +126,16 @@ export default function NewProductPage() {
           ...formData,
           price: parseFloat(formData.price),
           discount_price: formData.discount_price ? parseFloat(formData.discount_price) : null,
-          preparation_time: parseInt(formData.preparation_time),
-          calories: formData.calories ? parseInt(formData.calories) : null,
-          sort_order: parseInt(formData.sort_order),
+          preparation_time_minutes: parseInt(formData.preparation_time_minutes) || 0,
+          kcal: formData.kcal ? parseInt(formData.kcal) : null,
+          calories: formData.calories ? parseFloat(formData.calories) : null,
+          cholesterol: formData.cholesterol ? parseFloat(formData.cholesterol) : null,
+          carbohydrates: formData.carbohydrates ? parseFloat(formData.carbohydrates) : null,
+          fiber: formData.fiber ? parseFloat(formData.fiber) : null,
+          sodium: formData.sodium ? parseFloat(formData.sodium) : null,
+          protein: formData.protein ? parseFloat(formData.protein) : null,
+          fat: formData.fat ? parseFloat(formData.fat) : null,
+          sort_order: parseInt(formData.sort_order) || 0,
         }),
       });
 
@@ -88,7 +156,7 @@ export default function NewProductPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-tahini-dark">
           {isArabic ? 'إضافة منتج جديد' : 'Add New Product'}
@@ -104,6 +172,13 @@ export default function NewProductPage() {
 
       <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
         <div className="grid md:grid-cols-2 gap-6">
+          {/* Basic Information */}
+          <div className="md:col-span-2">
+            <h2 className="text-xl font-semibold text-tahini-dark mb-4 border-b pb-2">
+              {isArabic ? 'المعلومات الأساسية' : 'Basic Information'}
+            </h2>
+          </div>
+
           {/* Category */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -152,7 +227,7 @@ export default function NewProductPage() {
               onChange={handleInputChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
               required
-              placeholder="e.g., Chicken Shawarma"
+              placeholder="e.g., Dark Meat Kabsa"
             />
           </div>
 
@@ -168,7 +243,7 @@ export default function NewProductPage() {
               onChange={handleInputChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
               required
-              placeholder="مثال: شاورما دجاج"
+              placeholder="مثال: كبسة لحم غامق"
               dir="rtl"
             />
           </div>
@@ -176,7 +251,7 @@ export default function NewProductPage() {
           {/* Description EN */}
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {isArabic ? 'الوصف (إنجليزي)' : 'Description (English)'}
+              {isArabic ? 'الوصف (إنجليزي)' : 'Description (English)'} *
             </label>
             <textarea
               name="description_en"
@@ -184,6 +259,7 @@ export default function NewProductPage() {
               onChange={handleInputChange}
               rows="3"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
+              required
               placeholder="Describe the product in English"
             />
           </div>
@@ -191,7 +267,7 @@ export default function NewProductPage() {
           {/* Description AR */}
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {isArabic ? 'الوصف (عربي)' : 'Description (Arabic)'}
+              {isArabic ? 'الوصف (عربي)' : 'Description (Arabic)'} *
             </label>
             <textarea
               name="description_ar"
@@ -199,12 +275,13 @@ export default function NewProductPage() {
               onChange={handleInputChange}
               rows="3"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
+              required
               placeholder="وصف المنتج بالعربية"
               dir="rtl"
             />
           </div>
 
-          {/* Price */}
+          {/* Price & Discount */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {isArabic ? 'السعر' : 'Price (SAR)'} *
@@ -218,11 +295,10 @@ export default function NewProductPage() {
               required
               step="0.01"
               min="0"
-              placeholder="25.00"
+              placeholder="94.00"
             />
           </div>
 
-          {/* Discount Price */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {isArabic ? 'سعر الخصم' : 'Discount Price (SAR)'}
@@ -235,7 +311,7 @@ export default function NewProductPage() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
               step="0.01"
               min="0"
-              placeholder="20.00"
+              placeholder="80.00"
             />
           </div>
 
@@ -266,36 +342,270 @@ export default function NewProductPage() {
             </div>
           </div>
 
-          {/* Preparation Time */}
+          {/* Preparation & Calories */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {isArabic ? 'وقت التحضير' : 'Preparation Time (min)'}
+              {isArabic ? 'وقت التحضير (دقائق)' : 'Preparation Time (minutes)'}
             </label>
             <input
               type="number"
-              name="preparation_time"
-              value={formData.preparation_time}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
-              min="1"
-              placeholder="15"
-            />
-          </div>
-
-          {/* Calories */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {isArabic ? 'السعرات الحرارية' : 'Calories'}
-            </label>
-            <input
-              type="number"
-              name="calories"
-              value={formData.calories}
+              name="preparation_time_minutes"
+              value={formData.preparation_time_minutes}
               onChange={handleInputChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
               min="0"
-              placeholder="350"
+              placeholder="429"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {isArabic ? 'السعرات الحرارية (kcal)' : 'Calories (kcal)'}
+            </label>
+            <input
+              type="number"
+              name="kcal"
+              value={formData.kcal}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
+              min="0"
+              placeholder="1650"
+            />
+          </div>
+
+          {/* Nutritional Information */}
+          <div className="md:col-span-2">
+            <h2 className="text-xl font-semibold text-tahini-dark mb-4 border-b pb-2">
+              {isArabic ? 'المعلومات الغذائية' : 'Nutritional Information'}
+            </h2>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {isArabic ? 'الكوليسترول (mg)' : 'Cholesterol (mg)'}
+            </label>
+            <input
+              type="number"
+              name="cholesterol"
+              value={formData.cholesterol}
+              onChange={handleNutritionChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
+              step="0.01"
+              placeholder="352"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {isArabic ? 'الكاربوهيدرات (g)' : 'Carbohydrates (g)'}
+            </label>
+            <input
+              type="number"
+              name="carbohydrates"
+              value={formData.carbohydrates}
+              onChange={handleNutritionChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
+              step="0.01"
+              placeholder="113.5"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {isArabic ? 'الألياف (g)' : 'Fiber (g)'}
+            </label>
+            <input
+              type="number"
+              name="fiber"
+              value={formData.fiber}
+              onChange={handleNutritionChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
+              step="0.01"
+              placeholder="7.5"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {isArabic ? 'الصوديوم (mg)' : 'Sodium (mg)'}
+            </label>
+            <input
+              type="number"
+              name="sodium"
+              value={formData.sodium}
+              onChange={handleNutritionChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
+              step="0.01"
+              placeholder="3019"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {isArabic ? 'البروتين (g)' : 'Protein (g)'}
+            </label>
+            <input
+              type="number"
+              name="protein"
+              value={formData.protein}
+              onChange={handleNutritionChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
+              step="0.01"
+              placeholder="115.2"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {isArabic ? 'الدهون (g)' : 'Fat (g)'}
+            </label>
+            <input
+              type="number"
+              name="fat"
+              value={formData.fat}
+              onChange={handleNutritionChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
+              step="0.01"
+              placeholder="85.6"
+            />
+          </div>
+
+          {/* Sizes */}
+          <div className="md:col-span-2">
+            <h2 className="text-xl font-semibold text-tahini-dark mb-4 border-b pb-2">
+              {isArabic ? 'الأحجام والأسعار' : 'Sizes & Prices'}
+            </h2>
+          </div>
+
+          <div className="md:col-span-2">
+            <div className="flex flex-wrap gap-4 mb-4">
+              <input
+                type="text"
+                placeholder={isArabic ? 'الاسم (إنجليزي)' : 'Name (English)'}
+                value={newSize.name_en}
+                onChange={(e) => setNewSize({ ...newSize, name_en: e.target.value })}
+                className="flex-1 min-w-[150px] px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
+              />
+              <input
+                type="text"
+                placeholder={isArabic ? 'الاسم (عربي)' : 'Name (Arabic)'}
+                value={newSize.name_ar}
+                onChange={(e) => setNewSize({ ...newSize, name_ar: e.target.value })}
+                className="flex-1 min-w-[150px] px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
+                dir="rtl"
+              />
+              <input
+                type="number"
+                placeholder={isArabic ? 'السعر' : 'Price'}
+                value={newSize.price}
+                onChange={(e) => setNewSize({ ...newSize, price: e.target.value })}
+                className="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
+                step="0.01"
+                min="0"
+              />
+              <button
+                type="button"
+                onClick={addSize}
+                className="px-4 py-2 bg-tahini-gold text-white rounded-lg hover:bg-tahini-brown transition-colors flex items-center gap-2"
+              >
+                <FaPlus /> {isArabic ? 'إضافة' : 'Add'}
+              </button>
+            </div>
+
+            {formData.sizes.length > 0 && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="grid grid-cols-3 gap-4 font-semibold text-sm text-gray-600 mb-2">
+                  <span>{isArabic ? 'الاسم (إنجليزي)' : 'Name (English)'}</span>
+                  <span>{isArabic ? 'الاسم (عربي)' : 'Name (Arabic)'}</span>
+                  <span>{isArabic ? 'السعر' : 'Price'}</span>
+                </div>
+                {formData.sizes.map((size, index) => (
+                  <div key={index} className="grid grid-cols-3 gap-4 items-center py-2 border-t">
+                    <span>{size.name_en}</span>
+                    <span>{size.name_ar}</span>
+                    <span className="flex justify-between items-center">
+                      <span>{size.price} SAR</span>
+                      <button
+                        type="button"
+                        onClick={() => removeSize(index)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <FaTrash />
+                      </button>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Alerts */}
+          <div className="md:col-span-2">
+            <h2 className="text-xl font-semibold text-tahini-dark mb-4 border-b pb-2">
+              {isArabic ? 'التنبيهات والتحذيرات' : 'Alerts & Warnings'}
+            </h2>
+          </div>
+
+          <div className="md:col-span-2">
+            <div className="flex flex-wrap gap-4 mb-4">
+              <select
+                value={newAlert.alert_type}
+                onChange={(e) => setNewAlert({ ...newAlert, alert_type: e.target.value })}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
+              >
+                <option value="allergy">{isArabic ? 'حساسية' : 'Allergy'}</option>
+                <option value="preparation">{isArabic ? 'تحضير' : 'Preparation'}</option>
+                <option value="dietary">{isArabic ? 'حمية' : 'Dietary'}</option>
+              </select>
+              <input
+                type="text"
+                placeholder={isArabic ? 'الاسم (إنجليزي)' : 'Name (English)'}
+                value={newAlert.name_en}
+                onChange={(e) => setNewAlert({ ...newAlert, name_en: e.target.value })}
+                className="flex-1 min-w-[150px] px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
+              />
+              <input
+                type="text"
+                placeholder={isArabic ? 'الاسم (عربي)' : 'Name (Arabic)'}
+                value={newAlert.name_ar}
+                onChange={(e) => setNewAlert({ ...newAlert, name_ar: e.target.value })}
+                className="flex-1 min-w-[150px] px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tahini-gold"
+                dir="rtl"
+              />
+              <button
+                type="button"
+                onClick={addAlert}
+                className="px-4 py-2 bg-tahini-gold text-white rounded-lg hover:bg-tahini-brown transition-colors flex items-center gap-2"
+              >
+                <FaPlus /> {isArabic ? 'إضافة' : 'Add'}
+              </button>
+            </div>
+
+            {formData.alerts.length > 0 && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="grid grid-cols-3 gap-4 font-semibold text-sm text-gray-600 mb-2">
+                  <span>{isArabic ? 'النوع' : 'Type'}</span>
+                  <span>{isArabic ? 'الاسم (إنجليزي)' : 'Name (English)'}</span>
+                  <span>{isArabic ? 'الاسم (عربي)' : 'Name (Arabic)'}</span>
+                </div>
+                {formData.alerts.map((alert, index) => (
+                  <div key={index} className="grid grid-cols-3 gap-4 items-center py-2 border-t">
+                    <span className="text-sm">{alert.alert_type}</span>
+                    <span>{alert.name_en}</span>
+                    <span className="flex justify-between items-center">
+                      <span>{alert.name_ar}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeAlert(index)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <FaTrash />
+                      </button>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Checkboxes */}

@@ -50,7 +50,7 @@ export default function Header({ locale }) {
               <img 
                 src="/logo.png" 
                 alt="Tahini House" 
-                className="h-18 w-auto"
+                className="h-24 w-auto"
               />
             </Link>
 
@@ -68,8 +68,8 @@ export default function Header({ locale }) {
                 </Link>
               ))}
               <LanguageSwitcher locale={locale} />
-              <Link
-                href={getLocalizedPath('/cart')}
+              <button
+                onClick={() => setIsCartOpen(true)}
                 className="relative text-gray-700 hover:text-tahini-gold transition-colors"
               >
                 <FaShoppingCart className="text-xl" />
@@ -78,7 +78,7 @@ export default function Header({ locale }) {
                     {totalItems}
                   </span>
                 )}
-              </Link>
+              </button>
               <button className="text-gray-700 hover:text-tahini-gold transition-colors">
                 <FaUser className="text-xl" />
               </button>

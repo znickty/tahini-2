@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { FaPlus, FaCheck, FaHeart, FaRegHeart, FaStar, FaClock } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 
 export default function ProductCard({ product, onAddToCart, locale }) {
   const [isAdded, setIsAdded] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [imageError, setImageError] = useState(false);
   const isArabic = locale === 'ar';
+  const router = useRouter();
 
   const handleAddToCart = () => {
     onAddToCart(product);
@@ -28,7 +30,9 @@ export default function ProductCard({ product, onAddToCart, locale }) {
   const hasDiscount = product.discount_price && product.discount_price < product.price;
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group border border-gray-100 hover:border-tahini-gold">
+    <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group border border-gray-100 hover:border-tahini-gold cursor-pointer"
+    onClick={() => router.push(`/${locale}/product/${product.id}`)}
+    >
       {/* Image Container */}
       <div className="relative h-56 bg-gradient-to-br from-tahini-cream to-white overflow-hidden">
         {product.image_url && !imageError ? (
