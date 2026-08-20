@@ -112,7 +112,7 @@ export default function ProductDetailsPage() {
             <img
               src={product.image_url}
               alt={isArabic ? product.name_ar : product.name_en}
-              className="w-full h-96 object-cover"
+              className="w-full h-190 object-cover"
             />
           ) : (
             <div className="w-full h-96 bg-tahini-cream flex items-center justify-center text-6xl">
@@ -252,7 +252,7 @@ export default function ProductDetailsPage() {
           )}
 
           {/* Nutritional Info */}
-          {product.calories && (
+          {product.cholesterol && (
             <div className="border-t pt-4">
               <h3 className="font-semibold text-tahini-dark mb-3">
                 {isArabic ? 'المعلومات الغذائية' : 'Nutritional Information'}

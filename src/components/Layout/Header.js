@@ -68,8 +68,9 @@ export default function Header({ locale }) {
                 </Link>
               ))}
               <LanguageSwitcher locale={locale} />
-              <button
-                onClick={() => setIsCartOpen(true)}
+              <Link
+                href={getLocalizedPath('/cart')}
+                // onClick={() => setIsCartOpen(true)}
                 className="relative text-gray-700 hover:text-tahini-gold transition-colors"
               >
                 <FaShoppingCart className="text-xl" />
@@ -78,7 +79,7 @@ export default function Header({ locale }) {
                     {totalItems}
                   </span>
                 )}
-              </button>
+              </Link>
               <button className="text-gray-700 hover:text-tahini-gold transition-colors">
                 <FaUser className="text-xl" />
               </button>
